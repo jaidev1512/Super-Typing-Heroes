@@ -1,10 +1,15 @@
 {
   "version": 2,
-  "functions": {
-    "api/generate-text.js": {
-      "runtime": "@vercel/node"
+  "builds": [
+    {
+      "src": "api/generate-text.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
@@ -14,6 +19,5 @@
       "src": "/(.*)",
       "dest": "/public/$1"
     }
-  ],
-  "public": true
+  ]
 } 
