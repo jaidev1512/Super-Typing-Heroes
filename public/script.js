@@ -470,6 +470,8 @@ class TypingTutor {
         this.elements.newTextBtn.disabled = true;
 
         try {
+            console.log('Attempting to generate text with:', { difficulty, length });
+            
             const response = await fetch('/api/generate-text', {
                 method: 'POST',
                 headers: {
@@ -478,7 +480,20 @@ class TypingTutor {
                 body: JSON.stringify({ difficulty, length })
             });
 
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
             const data = await response.json();
+            console.log('Received data:', data);
+            
+            if (!data.text) {
+                throw new Error('No text received from server');
+            }
+
             this.textToType = data.text;
             this.displayText();
             this.resetTest();
@@ -488,14 +503,110 @@ class TypingTutor {
             // Show keyboard and highlight first key
             this.showKeyboard();
             this.highlightNextKey();
+            
+            console.log('Successfully generated text:', this.textToType);
         } catch (error) {
             console.error('Error generating text:', error);
-            this.textToType = "Error loading text. Please try again or check your connection.";
+            
+            // Fallback to local generation if API fails
+            console.log('Falling back to local text generation...');
+            this.textToType = this.generateFallbackText(difficulty, length);
             this.displayText();
+            this.resetTest();
+            this.elements.userInput.disabled = false;
+            this.elements.userInput.focus();
+            
+            // Show keyboard and highlight first key
+            this.showKeyboard();
+            this.highlightNextKey();
+            
+            // Show a non-intrusive notification
+            this.showNotification('🌟 Using offline text generation mode!', 'info');
         } finally {
             this.showLoading(false);
             this.elements.newTextBtn.disabled = false;
         }
+    }
+
+    generateFallbackText(difficulty, length) {
+        // Enhanced fallback text generation with multiple options
+        const fallbackTexts = {
+            easy: {
+                short: [
+                    "The cat sat on the mat. Dogs run fast in the park.",
+                    "Birds fly high in the sky. Fish swim in the water.",
+                    "Children play games all day. Books help us learn new things.",
+                    "The sun shines bright today. Trees grow tall and green.",
+                    "Cars drive on the road. People walk on the sidewalk."
+                ],
+                medium: [
+                    "The sun is bright today. Birds fly high in the blue sky. Children play games in the yard. Books help us learn new things.",
+                    "Dogs love to run and play. Cats like to sleep in the sun. People enjoy reading good books. Music makes everyone happy.",
+                    "The garden has many flowers. Children like to play outside. Food tastes better when shared. Friends make life more fun.",
+                    "Rain helps plants grow big. The moon shines at night. Summer days are warm and nice. Winter brings snow and ice.",
+                    "School teaches us many things. Sports keep our bodies strong. Art lets us be creative. Science helps us understand the world."
+                ],
+                long: [
+                    "The cat sat on the warm mat near the window. Dogs run fast in the green park every morning. Children play fun games in the big yard. Books help us learn many new and interesting things. Music makes people happy and cheerful.",
+                    "Every morning the sun rises bright and beautiful. Children wake up ready for a new day of learning and playing. Teachers help students discover amazing things about the world. Friends share stories and laugh together during lunch time.",
+                    "In the garden there are many colorful flowers blooming. Bees buzz from flower to flower collecting sweet nectar. Butterflies dance in the warm summer air. Birds sing cheerful songs from the tall green trees.",
+                    "The ocean waves crash against the sandy shore. Seagulls fly overhead looking for food to eat. Children build sandcastles and collect pretty shells. The salty air smells fresh and clean by the water.",
+                    "Winter snow covers the ground like a white blanket. Children love to build snowmen and throw snowballs. Hot chocolate tastes wonderful on cold winter days. Families gather around warm fires telling stories."
+                ]
+            },
+            medium: {
+                short: [
+                    "Technology advances rapidly in modern society. Education develops critical thinking skills effectively.",
+                    "Scientific research contributes to human knowledge. Digital communication connects people worldwide instantly.",
+                    "Environmental conservation requires collective global action. Innovation drives economic growth and prosperity.",
+                    "Cultural diversity enriches our understanding of humanity. Healthcare improvements extend human longevity significantly.",
+                    "Transportation systems facilitate global commerce efficiently. Renewable energy sources promote environmental sustainability."
+                ],
+                medium: [
+                    "Computer science involves systematic problem-solving methodologies. Educational institutions foster intellectual development and creativity. Professional communication requires clear and precise language skills.",
+                    "Modern technology transforms how we interact with information. Social networks enable global connectivity and collaboration. Digital literacy becomes increasingly important for career success.",
+                    "Scientific methodology guides researchers toward reliable conclusions. Environmental sustainability requires innovative technological solutions. Economic systems adapt to changing demographic and social patterns.",
+                    "Healthcare professionals utilize advanced diagnostic techniques for treatment. Educational systems incorporate multimedia resources for enhanced learning. Communication technology bridges geographical and cultural barriers effectively.",
+                    "Innovation drives competitive advantage in global markets. Collaborative teamwork produces superior project outcomes consistently. Quality management ensures sustainable organizational performance and growth."
+                ],
+                long: [
+                    "Technology advances rapidly in our increasingly connected modern society. Educational institutions foster intellectual development and promote creative thinking among students. Professional communication requires clear, precise, and effective language skills. Scientific research contributes significantly to our understanding of complex phenomena.",
+                    "Digital transformation influences every aspect of contemporary business operations. Organizations invest heavily in technological infrastructure to maintain competitive advantages. Workforce development programs prepare employees for evolving industry requirements. Global collaboration becomes essential for addressing complex international challenges.",
+                    "Environmental sustainability demands innovative approaches to resource management and conservation. Climate change mitigation requires coordinated efforts from government, industry, and individual citizens. Renewable energy technologies offer promising solutions for reducing carbon emissions. Sustainable development practices balance economic growth with environmental protection.",
+                    "Healthcare innovation improves patient outcomes through advanced medical technologies. Telemedicine expands access to quality healthcare services in remote areas. Preventive medicine emphasizes lifestyle factors that promote long-term wellness. Medical research continues to develop treatments for previously incurable diseases.",
+                    "Educational technology enhances learning experiences through interactive digital platforms. Online learning provides flexible opportunities for continuous professional development. Collaborative learning environments foster critical thinking and problem-solving skills. Assessment methodologies evolve to measure diverse forms of student achievement."
+                ]
+            },
+            hard: {
+                short: [
+                    "Entrepreneurship requires multidisciplinary knowledge and innovative thinking. Biotechnology revolutionizes pharmaceutical development processes.",
+                    "Cryptocurrency employs cryptographic algorithms for secure transactions. Nanotechnology enables precise molecular-level manufacturing capabilities.",
+                    "Artificial intelligence enhances decision-making through predictive analytics. Quantum computing promises exponential computational performance improvements.",
+                    "Bioengineering integrates engineering principles with biological systems effectively. Telecommunications infrastructure supports global information exchange networks.",
+                    "Pharmaceutical research utilizes sophisticated molecular modeling techniques. Semiconductor technology drives modern electronic device miniaturization."
+                ],
+                medium: [
+                    "Artificial intelligence systems utilize sophisticated algorithms for complex data analysis. Cryptocurrency technology employs cryptographic protocols for secure financial transactions. Nanotechnology applications demonstrate unprecedented precision in molecular engineering.",
+                    "Bioengineering combines biological principles with engineering methodologies for innovative solutions. Telecommunications networks enable high-speed data transmission across global infrastructure. Pharmaceutical development requires rigorous clinical testing and regulatory approval processes.",
+                    "Quantum computing leverages quantum mechanical phenomena for exponential processing capabilities. Cybersecurity protocols protect sensitive information from sophisticated attack vectors. Biotechnology applications transform agricultural production and environmental remediation.",
+                    "Machine learning algorithms process vast datasets to identify complex patterns and correlations. Blockchain technology ensures transparent and immutable transaction records. Genomic sequencing advances personalized medicine and therapeutic interventions.",
+                    "Microprocessor architecture continues evolving toward increased efficiency and performance optimization. Environmental engineering addresses pollution control and sustainable resource management. Robotics integration transforms manufacturing processes and service delivery."
+                ],
+                long: [
+                    "Entrepreneurship requires comprehensive multidisciplinary knowledge and innovative problem-solving capabilities. Biotechnology revolutionizes pharmaceutical development through advanced molecular engineering techniques. Artificial intelligence systems utilize sophisticated machine learning algorithms for complex pattern recognition and data analysis. Cryptocurrency platforms employ advanced cryptographic protocols to ensure secure, decentralized financial transactions.",
+                    "Nanotechnology applications demonstrate unprecedented precision in molecular-level manufacturing and materials engineering. Quantum computing harnesses quantum mechanical phenomena to achieve exponential computational performance improvements. Bioengineering integrates biological systems with engineering principles to develop innovative medical devices and therapeutic solutions. Telecommunications infrastructure supports high-bandwidth global connectivity.",
+                    "Cybersecurity frameworks implement multi-layered defense strategies against increasingly sophisticated attack vectors. Renewable energy technologies optimize efficiency through advanced materials science and engineering innovations. Genomic research enables personalized medicine approaches through comprehensive DNA sequencing and analysis. Robotics automation transforms manufacturing processes.",
+                    "Semiconductor fabrication utilizes cutting-edge lithography techniques to achieve nanometer-scale precision. Environmental engineering addresses complex pollution control challenges through interdisciplinary approaches. Machine learning architectures process massive datasets to extract meaningful insights and predictive models. Blockchain protocols ensure transparent, immutable transaction verification.",
+                    "Pharmaceutical development integrates computational drug design with clinical trial methodologies. Aerospace engineering advances propulsion systems for space exploration missions. Materials science research develops novel composites with enhanced strength-to-weight ratios. Telecommunications protocols enable ultra-low latency global communication networks."
+                ]
+            }
+        };
+
+        const difficultyTexts = fallbackTexts[difficulty] || fallbackTexts.medium;
+        const textArray = difficultyTexts[length] || difficultyTexts.medium;
+        
+        // Return a random text from the array
+        return textArray[Math.floor(Math.random() * textArray.length)];
     }
 
     displayText() {
