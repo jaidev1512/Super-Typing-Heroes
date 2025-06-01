@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Super Typing Heroes - Learn to Type Fast!</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Fun floating shapes for kids -->
+    <div class="floating-shapes">
+        <div class="shape shape-1">🎈</div>
+        <div class="shape shape-2">⭐</div>
+        <div class="shape shape-3">🌈</div>
+        <div class="shape shape-4">🎯</div>
+        <div class="shape shape-5">🚀</div>
+        <div class="shape shape-6">🎪</div>
+        <div class="shape shape-7">🦄</div>
+        <div class="shape shape-8">🎨</div>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="hamburger-menu" id="hamburgerMenu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+    </button>
+
+    <!-- Progress Sidebar -->
+    <div class="sidebar" id="progressSidebar">
+        <div class="sidebar-header">
+            <h2>🏆 My Super Stats!</h2>
+            <button class="close-sidebar" id="closeSidebar">&times;</button>
+        </div>
+        <div class="sidebar-content" id="sidebarContent">
+            <!-- Progress content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1>🎮 Super Typing Heroes!</h1>
+            <p>🚀 Become a typing superhero and save the day with your amazing typing powers! 🦸‍♀️</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-label">⚡ Speed</span>
+                <span class="stat-value" id="wpm">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">🎯 Accuracy</span>
+                <span class="stat-value" id="accuracy">100%</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">⏰ Time</span>
+                <span class="stat-value" id="timer">0s</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">📝 Letters</span>
+                <span class="stat-value" id="chars">0/0</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <select id="difficulty">
+                <option value="easy">🌟 Easy Peasy</option>
+                <option value="medium">🔥 Getting Hot</option>
+                <option value="hard">💪 Super Challenge</option>
+            </select>
+            <select id="length">
+                <option value="short">✨ Quick Practice</option>
+                <option value="medium" selected>🎪 Fun Adventure</option>
+                <option value="long">🏰 Epic Quest</option>
+            </select>
+            <button id="newText" class="btn">🎲 New Mission!</button>
+            <button id="resetTest" class="btn btn-secondary">🔄 Try Again</button>
+            <button id="showKeyboard" class="btn btn-secondary">⌨️ Show Helper</button>
+        </div>
+
+        <div class="typing-area">
+            <div id="textToType" class="text-display">
+                🌟 Click "New Mission!" to start your typing adventure! 🌟
+            </div>
+            <textarea id="userInput" class="typing-input" placeholder="🎯 Start typing here to become a typing hero..." disabled></textarea>
+        </div>
+
+        <!-- Virtual Keyboard -->
+        <div class="keyboard-container" id="keyboardContainer" style="display: none;">
+            <div class="keyboard-header">
+                <h3>🎯 Next Key to Press</h3>
+                <button id="toggleKeyboard" class="btn btn-small">Hide Helper</button>
+            </div>
+            <div class="keyboard" id="virtualKeyboard">
+                <!-- Row 1 -->
+                <div class="keyboard-row">
+                    <div class="key" data-key="`">~<br>`</div>
+                    <div class="key" data-key="1">!<br>1</div>
+                    <div class="key" data-key="2">@<br>2</div>
+                    <div class="key" data-key="3">#<br>3</div>
+                    <div class="key" data-key="4">$<br>4</div>
+                    <div class="key" data-key="5">%<br>5</div>
+                    <div class="key" data-key="6">^<br>6</div>
+                    <div class="key" data-key="7">&<br>7</div>
+                    <div class="key" data-key="8">*<br>8</div>
+                    <div class="key" data-key="9">(<br>9</div>
+                    <div class="key" data-key="0">)<br>0</div>
+                    <div class="key" data-key="-">_<br>-</div>
+                    <div class="key" data-key="=">+<br>=</div>
+                    <div class="key key-wide" data-key="Backspace">Backspace</div>
+                </div>
+                
+                <!-- Row 2 -->
+                <div class="keyboard-row">
+                    <div class="key key-wide" data-key="Tab">Tab</div>
+                    <div class="key" data-key="q">Q</div>
+                    <div class="key" data-key="w">W</div>
+                    <div class="key" data-key="e">E</div>
+                    <div class="key" data-key="r">R</div>
+                    <div class="key" data-key="t">T</div>
+                    <div class="key" data-key="y">Y</div>
+                    <div class="key" data-key="u">U</div>
+                    <div class="key" data-key="i">I</div>
+                    <div class="key" data-key="o">O</div>
+                    <div class="key" data-key="p">P</div>
+                    <div class="key" data-key="[">{<br>[</div>
+                    <div class="key" data-key="]">}<br>]</div>
+                    <div class="key key-wide" data-key="\">|<br>\</div>
+                </div>
+                
+                <!-- Row 3 -->
+                <div class="keyboard-row">
+                    <div class="key key-extra-wide" data-key="CapsLock">Caps Lock</div>
+                    <div class="key" data-key="a">A</div>
+                    <div class="key" data-key="s">S</div>
+                    <div class="key" data-key="d">D</div>
+                    <div class="key" data-key="f">F</div>
+                    <div class="key" data-key="g">G</div>
+                    <div class="key" data-key="h">H</div>
+                    <div class="key" data-key="j">J</div>
+                    <div class="key" data-key="k">K</div>
+                    <div class="key" data-key="l">L</div>
+                    <div class="key" data-key=";">:<br>;</div>
+                    <div class="key" data-key="'">"<br>'</div>
+                    <div class="key key-extra-wide" data-key="Enter">Enter</div>
+                </div>
+                
+                <!-- Row 4 -->
+                <div class="keyboard-row">
+                    <div class="key key-extra-wide" data-key="Shift">Shift</div>
+                    <div class="key" data-key="z">Z</div>
+                    <div class="key" data-key="x">X</div>
+                    <div class="key" data-key="c">C</div>
+                    <div class="key" data-key="v">V</div>
+                    <div class="key" data-key="b">B</div>
+                    <div class="key" data-key="n">N</div>
+                    <div class="key" data-key="m">M</div>
+                    <div class="key" data-key=","><br>,</div>
+                    <div class="key" data-key=".">><br>.</div>
+                    <div class="key" data-key="/">?<br>/</div>
+                    <div class="key key-extra-wide" data-key="Shift">Shift</div>
+                </div>
+                
+                <!-- Row 5 -->
+                <div class="keyboard-row">
+                    <div class="key key-wide" data-key="Ctrl">Ctrl</div>
+                    <div class="key key-wide" data-key="Win">Win</div>
+                    <div class="key key-wide" data-key="Alt">Alt</div>
+                    <div class="key key-spacebar" data-key=" ">Space</div>
+                    <div class="key key-wide" data-key="Alt">Alt</div>
+                    <div class="key key-wide" data-key="Win">Win</div>
+                    <div class="key key-wide" data-key="Menu">Menu</div>
+                    <div class="key key-wide" data-key="Ctrl">Ctrl</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results" id="results" style="display: none;">
+            <h3>🎉 Mission Complete! You're Amazing! 🌟</h3>
+            <div class="final-stats">
+                <div class="final-stat">
+                    <span class="final-stat-value" id="finalWpm">0</span>
+                    <span class="final-stat-label">Super Speed!</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-stat-value" id="finalAccuracy">0%</span>
+                    <span class="final-stat-label">Awesome Accuracy!</span>
+                </div>
+                <div class="final-stat">
+                    <span class="final-stat-value" id="finalTime">0s</span>
+                    <span class="final-stat-label">Lightning Time!</span>
+                </div>
+            </div>
+            <button id="retryTest" class="btn">🚀 Another Adventure!</button>
+        </div>
+
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>🎪 Creating your awesome typing adventure...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

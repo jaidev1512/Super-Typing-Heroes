@@ -1,0 +1,17 @@
+{
+  "name": "typing-tutor",
+  "version": "1.0.0",
+  "description": "A simple typing tutor with local word generation and speed measurement",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "keywords": ["typing", "tutor", "speed", "local", "practice"],
+  "author": "",
+  "license": "MIT"
+} 
